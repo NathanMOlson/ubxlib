@@ -19,20 +19,32 @@
  * IP stack of the ESP-IDF platform.
  *
  * For this example to run you must define U_CFG_PPP_ENABLE when
- * building ubxlib and you must switch on the following in your
- * sdkconfig file:
+ * building ubxlib (e.g. you could do this by including it in the
+ * U_FLAGS environment variable that the ubxlib ESP-IDF component
+ * looks for, e.g. set U_FLAGS=-DU_CFG_PPP_ENABLE).
  *
- * CONFIG_LWIP_PPP_SUPPORT
- * CONFIG_ESP_NETIF_TCPIP_LWIP
- * CONFIG_LWIP_PPP_PAP_SUPPORT
+ * You must also bring in the right ESP-IDF components through menuconfig
+ * by going to "Component Config" and making sure that the following are
+ * ticked:
  *
- * If your network operator requires a user name and password
- * along with the APN **AND** requires CHAP authentication, then
- * you must also switch on CONFIG_LWIP_PPP_CHAP_SUPPORT.
+ * - "ESP NETIF Adapter --> TCP/IP Stack Library (LwIP) --> LwIP"
+ * - "LWIP --> Enable PAP support"
+ * - if your network operator requires a user name and password along
+ *   with the APN **AND** requires CHAP authentication, then also
+ *   "LWIP --> Enable CHAP support".
  *
- * If you are minimising the components built into your main
- * application then you may need to add the ESP-IDF component
- * "esp_netif" to your component list.
+ * Alternatively, if you prefer to set things up manually, rather than
+ * through menuconfig, then switch on the following in your sdkconfig
+ * file:
+ *
+ * - CONFIG_LWIP_PPP_SUPPORT
+ * - CONFIG_ESP_NETIF_TCPIP_LWIP
+ * - CONFIG_LWIP_PPP_PAP_SUPPORT
+ * - CONFIG_LWIP_PPP_CHAP_SUPPORT (if required)
+ *
+ * ...and, if you are minimising the components built into your main
+ * application, you may need to add the ESP-IDF component "esp_netif"
+ * to your component list.
  *
  * The choice of [cellular] module is made at build time, see the
  * README.md for instructions.
