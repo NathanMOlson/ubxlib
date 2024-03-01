@@ -198,7 +198,7 @@
 
 /** Used for keepGoingCallback() timeout.
  */
-static int64_t gStopTimeMs;
+static int32_t gStopTimeMs;
 
 /** Handles.
  */
@@ -282,7 +282,7 @@ static bool keepGoingCallback(uDeviceHandle_t gnssHandle)
     bool keepGoing = true;
 
     U_PORT_TEST_ASSERT(gnssHandle == gHandles.gnssHandle);
-    if (uPortGetTickTimeMs() > gStopTimeMs) {
+    if (U_PORT_TICK_TIME_BEYOND_STOP_OR_WRAP_MS(gStopTimeMs)) {
         keepGoing = false;
     }
 
@@ -407,7 +407,7 @@ U_PORT_TEST_FUNCTION("[gnssPos]", "gnssPosPos")
             svs = 0;
             timeUtc = LONG_MIN;
             startTimeMs = uPortGetTickTimeMs();
-            gStopTimeMs = startTimeMs + U_GNSS_POS_TEST_TIMEOUT_SECONDS * 1000;
+            gStopTimeMs = startTimeMs + (U_GNSS_POS_TEST_TIMEOUT_SECONDS * 1000);
             y = uGnssPosGet(gnssHandle,
                             &latitudeX1e7, &longitudeX1e7,
                             &altitudeMillimetres,
@@ -419,7 +419,7 @@ U_PORT_TEST_FUNCTION("[gnssPos]", "gnssPosPos")
             U_PORT_TEST_ASSERT(y == 0);
 
             U_TEST_PRINT_LINE_X("position establishment took %d second(s).", z + 1,
-                                (int32_t) (uPortGetTickTimeMs() - startTimeMs) / 1000);
+                                (uPortGetTickTimeMs() - startTimeMs) / 1000);
             prefix[0] = latLongToBits(latitudeX1e7, &(whole[0]), &(fraction[0]));
             prefix[1] = latLongToBits(longitudeX1e7, &(whole[1]), &(fraction[1]));
             U_TEST_PRINT_LINE_X("location %c%d.%07d/%c%d.%07d (radius %d metre(s)), %d metre(s) high,"
@@ -453,7 +453,7 @@ U_PORT_TEST_FUNCTION("[gnssPos]", "gnssPosPos")
             gErrorCode = 0xFFFFFFFF;
             gGoodPosCount = 0;
             startTimeMs = uPortGetTickTimeMs();
-            gStopTimeMs = startTimeMs + U_GNSS_POS_TEST_TIMEOUT_SECONDS * 1000;
+            gStopTimeMs = startTimeMs + (U_GNSS_POS_TEST_TIMEOUT_SECONDS * 1000);
             if (z == 0) {
                 // Check that calling stop first causes no problem
                 uGnssPosGetStop(gnssHandle);
@@ -468,7 +468,7 @@ U_PORT_TEST_FUNCTION("[gnssPos]", "gnssPosPos")
                 gErrorCode = 0xFFFFFFFF;
                 gGoodPosCount = 0;
                 startTimeMs = uPortGetTickTimeMs();
-                gStopTimeMs = startTimeMs + U_GNSS_POS_TEST_TIMEOUT_SECONDS * 1000;
+                gStopTimeMs = startTimeMs + (U_GNSS_POS_TEST_TIMEOUT_SECONDS * 1000);
             }
             U_TEST_PRINT_LINE_X("waiting up to %d second(s) for results from asynchronous API...", z + 1,
                                 U_GNSS_POS_TEST_TIMEOUT_SECONDS);
@@ -484,7 +484,7 @@ U_PORT_TEST_FUNCTION("[gnssPos]", "gnssPosPos")
             U_PORT_TEST_ASSERT(gErrorCode == 0);
             U_PORT_TEST_ASSERT(gGoodPosCount == 1);
             U_TEST_PRINT_LINE_X("position establishment took %d second(s).", z + 1,
-                                (int32_t) (uPortGetTickTimeMs() - startTimeMs) / 1000);
+                                (uPortGetTickTimeMs() - startTimeMs) / 1000);
 
             prefix[0] = latLongToBits(gLatitudeX1e7, &(whole[0]), &(fraction[0]));
             prefix[1] = latLongToBits(gLongitudeX1e7, &(whole[1]), &(fraction[1]));
@@ -591,7 +591,7 @@ U_PORT_TEST_FUNCTION("[gnssPos]", "gnssPosRrlp")
                             U_GNSS_POS_TEST_RRLP_PSEUDORANGE_RMS_ERROR_INDEX_LIMIT,
                             keepGoingCallback);
         U_TEST_PRINT_LINE("RRLP took %d second(s) to arrive.",
-                          (int32_t) (uPortGetTickTimeMs() - startTimeMs) / 1000);
+                          (uPortGetTickTimeMs() - startTimeMs) / 1000);
         U_TEST_PRINT_LINE("%d byte(s) of RRLP information was returned.", y);
         // Must contain at least 6 bytes for the header
         U_PORT_TEST_ASSERT(y >= 6);
@@ -640,7 +640,7 @@ U_PORT_TEST_FUNCTION("[gnssPos]", "gnssPosRrlp")
                                 INT_MAX, INT_MAX, INT_MAX, INT_MAX,
                                 keepGoingCallback);
             U_TEST_PRINT_LINE("RRLP took %d second(s) to arrive.",
-                              (int32_t) (uPortGetTickTimeMs() - startTimeMs) / 1000);
+                              (uPortGetTickTimeMs() - startTimeMs) / 1000);
             U_TEST_PRINT_LINE("%d byte(s) of RRLP information was returned.", y);
             // Must contain at least 6 bytes for the header
             U_PORT_TEST_ASSERT(y >= 6);

@@ -729,7 +729,8 @@ int32_t uCellTimeSyncCellEnable(uDeviceHandle_t cellHandle,
                             startTimeMs = uPortGetTickTimeMs();
                             errorCode = (int32_t) U_ERROR_COMMON_TIMEOUT;
                             while ((pContext->errorCode == INT_MIN) &&
-                                   (uPortGetTickTimeMs() - startTimeMs < (U_CELL_TIME_SYNC_TIME_SECONDS * 1000))) {
+                                   !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs,
+                                                                        U_CELL_TIME_SYNC_TIME_SECONDS * 1000)) {
                                 uPortTaskBlock(1000);
                             }
                             if (pContext->errorCode != INT_MIN) {
@@ -791,7 +792,8 @@ int32_t uCellTimeSyncCellDisable(uDeviceHandle_t cellHandle)
                             startTimeMs = uPortGetTickTimeMs();
                             errorCode = (int32_t) U_ERROR_COMMON_TIMEOUT;
                             while ((pContext->errorCode != (int32_t) U_ERROR_COMMON_CANCELLED) &&
-                                   (uPortGetTickTimeMs() - startTimeMs < (U_CELL_TIME_SYNC_TIME_SECONDS * 1000))) {
+                                   !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs,
+                                                                        U_CELL_TIME_SYNC_TIME_SECONDS * 1000)) {
                                 uPortTaskBlock(1000);
                             }
                             if (pContext->errorCode != INT_MIN) {

@@ -252,7 +252,7 @@ static int32_t sendEvent(uCellMuxPrivateContext_t *pContext,
                     uPortTaskBlock(U_CFG_OS_YIELD_MS);
                     irqSupported = (errorCode != (int32_t) U_ERROR_COMMON_NOT_IMPLEMENTED) &&
                                    (errorCode != (int32_t) U_ERROR_COMMON_NOT_SUPPORTED);
-                } while (irqSupported && (uPortGetTickTimeMs() - startTimeMs < delayMs));
+                } while (irqSupported && !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs, delayMs));
 
                 if (!irqSupported) {
                     // If IRQ is not supported, just gotta do the normal send
@@ -380,7 +380,8 @@ static int32_t serialWriteInnards(struct uDeviceSerial_t *pDeviceSerial,
         }
         startTimeMs = uPortGetTickTimeMs();
         while ((sizeWritten < sizeBytes) && (sizeOrErrorCode >= 0) &&
-               (uPortGetTickTimeMs() - startTimeMs < U_CELL_MUX_WRITE_TIMEOUT_MS)) {
+               !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs,
+                                                    U_CELL_MUX_WRITE_TIMEOUT_MS)) {
             // Encode a chunk as UIH
             thisChunkSize = sizeBytes - sizeWritten;
             if (thisChunkSize > U_CELL_MUX_PRIVATE_INFORMATION_LENGTH_MAX_BYTES) {
@@ -393,7 +394,8 @@ static int32_t serialWriteInnards(struct uDeviceSerial_t *pDeviceSerial,
             if (sizeOrErrorCode >= 0) {
                 lengthWritten = 0;
                 while ((sizeOrErrorCode >= 0) && (lengthWritten < (size_t) sizeOrErrorCode) &&
-                       (uPortGetTickTimeMs() - startTimeMs < U_CELL_MUX_WRITE_TIMEOUT_MS)) {
+                       !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs,
+                                                            U_CELL_MUX_WRITE_TIMEOUT_MS)) {
                     if (!pChannelContext->traffic.txIsFlowControlledOff) {
                         // Send the data
                         thisLengthWritten = uPortUartWrite(pChannelContext->pContext->underlyingStreamHandle,
@@ -513,7 +515,7 @@ static int32_t sendCommandCheckResponse(uDeviceSerial_t *pDeviceSerial,
             // Wait for a response
             startTimeMs = uPortGetTickTimeMs();
             while ((pTraffic->wantedResponseFrameType != U_CELL_MUX_PRIVATE_FRAME_TYPE_NONE) &&
-                   (uPortGetTickTimeMs() - startTimeMs < timeoutMs)) {
+                   !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs, timeoutMs)) {
                 uPortTaskBlock(10);
             }
             if (pTraffic->wantedResponseFrameType == U_CELL_MUX_PRIVATE_FRAME_TYPE_NONE) {

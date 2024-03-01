@@ -248,7 +248,7 @@ static bool keepGoingCallback(uDeviceHandle_t param)
 
     (void) param;
 
-    if (uPortGetTickTimeMs() > gStopTimeMs) {
+    if (U_PORT_TICK_TIME_BEYOND_STOP_OR_WRAP_MS(gStopTimeMs)) {
         keepGoing = false;
     }
 
@@ -727,8 +727,8 @@ U_PORT_TEST_FUNCTION("[cellLoc]", "cellLocLoc")
 
     // Get position, blocking version
     U_TEST_PRINT_LINE("location establishment, blocking version.");
-    startTime = uPortGetTickTimeMs();
-    gStopTimeMs = startTime + U_CELL_LOC_TEST_TIMEOUT_SECONDS * 1000;
+    startTimeMs = uPortGetTickTimeMs();
+    gStopTimeMs = startTimeMs + U_CELL_LOC_TEST_TIMEOUT_SECONDS * 1000;
     x = uCellLocGet(cellHandle, &latitudeX1e7, &longitudeX1e7,
                     &altitudeMillimetres, &radiusMillimetres,
                     &speedMillimetresPerSecond, &svs,
@@ -738,7 +738,7 @@ U_PORT_TEST_FUNCTION("[cellLoc]", "cellLocLoc")
     // we should always get time
     if (x == 0) {
     U_TEST_PRINT_LINE("location establishment took %d second(s).",
-                      (int32_t) (uPortGetTickTimeMs() - startTime) / 1000);
+                      (uPortGetTickTimeMs() - startTimeMs) / 1000);
         if ((radiusMillimetres > 0) &&
             (radiusMillimetres <= U_CELL_LOC_TEST_MAX_RADIUS_MILLIMETRES)) {
             prefix[0] = latLongToBits(latitudeX1e7, &(whole[0]), &(fraction[0]));
@@ -796,7 +796,7 @@ U_PORT_TEST_FUNCTION("[cellLoc]", "cellLocLoc")
         // we should always get time
         if (gErrorCode == 0) {
             U_TEST_PRINT_LINE("location establishment took %d second(s).",
-                              (int32_t) (uPortGetTickTimeMs() - startTime) / 1000);
+                              (uPortGetTickTimeMs() - startTimeMs) / 1000);
             U_PORT_TEST_ASSERT(gCellHandle == cellHandle);
             if ((radiusMillimetres > 0) &&
                 (radiusMillimetres <= U_CELL_LOC_TEST_MAX_RADIUS_MILLIMETRES)) {
@@ -804,7 +804,7 @@ U_PORT_TEST_FUNCTION("[cellLoc]", "cellLocLoc")
                 U_PORT_TEST_ASSERT((x >= U_LOCATION_STATUS_UNKNOWN) &&
                                    (x < U_LOCATION_STATUS_MAX_NUM));
                 U_TEST_PRINT_LINE("location establishment took %d second(s).",
-                                  (int32_t) (uPortGetTickTimeMs() - startTime) / 1000);
+                                  (uPortGetTickTimeMs() - startTimeMs) / 1000);
                 U_PORT_TEST_ASSERT(gLatitudeX1e7 > INT_MIN);
                 U_PORT_TEST_ASSERT(gLongitudeX1e7 > INT_MIN);
                 U_PORT_TEST_ASSERT(gAltitudeMillimetres > INT_MIN);

@@ -345,7 +345,7 @@ static bool keepGoingCallback(uDeviceHandle_t devHandle)
     bool keepGoing = true;
 
     U_PORT_TEST_ASSERT(devHandle == gDevHandle);
-    if (uPortGetTickTimeMs() > gStopTimeMs) {
+    if (U_PORT_TICK_TIME_BEYOND_STOP_OR_WRAP_MS(gStopTimeMs)) {
         keepGoing = false;
     }
 
@@ -811,7 +811,7 @@ U_PORT_TEST_FUNCTION("[network]", "networkLoc")
                                      &location, keepGoingCallback);
                     if (y == 0) {
                         U_TEST_PRINT_LINE("location establishment took %d second(s).",
-                                          (int32_t) (uPortGetTickTimeMs() - startTimeMs) / 1000);
+                                          (uPortGetTickTimeMs() - startTimeMs) / 1000);
                     }
                     // If we are running on a local cellular network we won't get position but
                     // we should always get time

@@ -678,7 +678,7 @@ static size_t sendTcp(uSockDescriptor_t descriptor,
     U_TEST_PRINT_LINE("sending %d byte(s) of TCP data...", sizeBytes);
     startTimeMs = uPortGetTickTimeMs();
     while ((sentSizeBytes < sizeBytes) &&
-           ((uPortGetTickTimeMs() - startTimeMs) < 10000)) {
+           !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs, 10000)) {
         x = uSockWrite(descriptor, (const void *) pData,
                        sizeBytes - sentSizeBytes);
         if (x > 0) {
@@ -1245,7 +1245,7 @@ U_PORT_TEST_FUNCTION("[sock]", "sockBasicTcp")
         //lint -e{441} Suppress loop variable not found in
         // condition: we're using time instead
         for (y = 0; (offset < sizeof(gSendData) - 1) &&
-             (uPortGetTickTimeMs() - startTimeMs < 20000); y++) {
+             !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs, 20000); y++) {
             sizeBytes = uSockRead(descriptor,
                                   pDataReceived + offset +
                                   U_SOCK_TEST_GUARD_LENGTH_SIZE_BYTES,
@@ -1258,11 +1258,11 @@ U_PORT_TEST_FUNCTION("[sock]", "sockBasicTcp")
         sizeBytes = offset;
         if (sizeBytes < sizeof(gSendData) - 1) {
             U_TEST_PRINT_LINE("only %d byte(s) received after %d ms.", sizeBytes,
-                              (int32_t) (uPortGetTickTimeMs() - startTimeMs));
+                              uPortGetTickTimeMs() - startTimeMs);
         } else {
             U_TEST_PRINT_LINE("all %d byte(s) received back after %d ms,"
                               " checking if they were as expected...", sizeBytes,
-                              (int32_t) (uPortGetTickTimeMs() - startTimeMs));
+                              uPortGetTickTimeMs() - startTimeMs);
         }
 
         // Check that we reassembled everything correctly
@@ -1568,7 +1568,7 @@ U_PORT_TEST_FUNCTION("[sock]", "sockOptionsSetGet")
         U_PORT_TEST_ASSERT(errno == U_SOCK_EWOULDBLOCK);
         errno = 0;
         U_TEST_PRINT_LINE("uSockReceiveFrom() of nothing took %d"
-                          " millisecond(s)...", (int32_t) elapsedMs);
+                          " millisecond(s)...", elapsedMs);
         U_PORT_TEST_ASSERT(elapsedMs > timeoutMs -
                            U_SOCK_TEST_TIME_MARGIN_MINUS_MS);
         U_PORT_TEST_ASSERT(elapsedMs < timeoutMs +
@@ -1577,8 +1577,7 @@ U_PORT_TEST_FUNCTION("[sock]", "sockOptionsSetGet")
         timeout.tv_usec = 500000;
         timeoutMs = (((int32_t) timeout.tv_sec) * 1000) +
                     (timeout.tv_usec / 1000);
-        U_TEST_PRINT_LINE("setting timeout to %d millisecond(s)...",
-                          (int32_t) timeoutMs);
+        U_TEST_PRINT_LINE("setting timeout to %d millisecond(s)...", timeoutMs);
         U_PORT_TEST_ASSERT(uSockOptionSet(descriptor,
                                           U_SOCK_OPT_LEVEL_SOCK,
                                           U_SOCK_OPT_RCVTIMEO,
@@ -1592,7 +1591,7 @@ U_PORT_TEST_FUNCTION("[sock]", "sockOptionsSetGet")
         U_PORT_TEST_ASSERT(errno == U_SOCK_EWOULDBLOCK);
         errno = 0;
         U_TEST_PRINT_LINE("uSockReceiveFrom() of nothing took %d"
-                          " millisecond(s)...", (int32_t) elapsedMs);
+                          " millisecond(s)...", elapsedMs);
         U_PORT_TEST_ASSERT(elapsedMs > timeoutMs -
                            U_SOCK_TEST_TIME_MARGIN_MINUS_MS);
         U_PORT_TEST_ASSERT(elapsedMs < timeoutMs +
@@ -1750,7 +1749,7 @@ U_PORT_TEST_FUNCTION("[sock]", "sockLocalPort")
             //lint -e{441} Suppress loop variable not found in
             // condition: we're using time instead
             for (y = 0; (offset < sizeof(gSendData) - 1) &&
-                 (uPortGetTickTimeMs() - startTimeMs < 20000); y++) {
+                 !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs, 20000); y++) {
                 sizeBytes = uSockRead(descriptor,
                                       pDataReceived + offset +
                                       U_SOCK_TEST_GUARD_LENGTH_SIZE_BYTES,
@@ -1763,11 +1762,11 @@ U_PORT_TEST_FUNCTION("[sock]", "sockLocalPort")
             sizeBytes = offset;
             if (sizeBytes < sizeof(gSendData) - 1) {
                 U_TEST_PRINT_LINE("only %d byte(s) received after %d ms.", sizeBytes,
-                                  (int32_t) (uPortGetTickTimeMs() - startTimeMs));
+                                  uPortGetTickTimeMs() - startTimeMs);
             } else {
                 U_TEST_PRINT_LINE("all %d byte(s) received back after %d ms,"
                                   " checking if they were as expected...", sizeBytes,
-                                  (int32_t) (uPortGetTickTimeMs() - startTimeMs));
+                                  uPortGetTickTimeMs() - startTimeMs);
             }
 
             // Check that we reassembled everything correctly
@@ -1931,7 +1930,7 @@ U_PORT_TEST_FUNCTION("[sock]", "sockNonBlocking")
         errno = 0;
         elapsedMs = uPortGetTickTimeMs() - startTimeMs;
         U_TEST_PRINT_LINE("uSockReceiveFrom() of nothing took %d"
-                          " millisecond(s)...", (int32_t) elapsedMs);
+                          " millisecond(s)...", elapsedMs);
         U_PORT_TEST_ASSERT(elapsedMs > timeoutMs -
                            U_SOCK_TEST_TIME_MARGIN_MINUS_MS);
         U_PORT_TEST_ASSERT(elapsedMs < timeoutMs +
@@ -1942,8 +1941,7 @@ U_PORT_TEST_FUNCTION("[sock]", "sockNonBlocking")
         U_PORT_TEST_ASSERT(errno == U_SOCK_EWOULDBLOCK);
         errno = 0;
         elapsedMs = uPortGetTickTimeMs() - startTimeMs;
-        U_TEST_PRINT_LINE("uSockRead() of nothing took %d millisecond(s)...",
-                          (int32_t) elapsedMs);
+        U_TEST_PRINT_LINE("uSockRead() of nothing took %d millisecond(s)...", elapsedMs);
         U_PORT_TEST_ASSERT(elapsedMs > timeoutMs -
                            U_SOCK_TEST_TIME_MARGIN_MINUS_MS);
         U_PORT_TEST_ASSERT(elapsedMs < timeoutMs +
@@ -1968,7 +1966,7 @@ U_PORT_TEST_FUNCTION("[sock]", "sockNonBlocking")
         U_PORT_TEST_ASSERT(errno == U_SOCK_EWOULDBLOCK);
         errno = 0;
         U_TEST_PRINT_LINE("uSockReceiveFrom() of nothing with blocking off"
-                          " took %d millisecond(s)...", (int32_t) elapsedMs);
+                          " took %d millisecond(s)...", elapsedMs);
         U_PORT_TEST_ASSERT(elapsedMs < U_SOCK_TEST_NON_BLOCKING_TIME_MS +
                            U_SOCK_TEST_TIME_MARGIN_PLUS_MS);
         startTimeMs = uPortGetTickTimeMs();
@@ -1978,7 +1976,7 @@ U_PORT_TEST_FUNCTION("[sock]", "sockNonBlocking")
         U_PORT_TEST_ASSERT(errno == U_SOCK_EWOULDBLOCK);
         errno = 0;
         U_TEST_PRINT_LINE("uSockRead() of nothing with blocking off"
-                          " took %d millisecond(s)...", (int32_t) elapsedMs);
+                          " took %d millisecond(s)...", elapsedMs);
         U_PORT_TEST_ASSERT(elapsedMs < U_SOCK_TEST_NON_BLOCKING_TIME_MS +
                            U_SOCK_TEST_TIME_MARGIN_PLUS_MS);
 
@@ -1994,7 +1992,7 @@ U_PORT_TEST_FUNCTION("[sock]", "sockNonBlocking")
         U_PORT_TEST_ASSERT(errno == U_SOCK_EWOULDBLOCK);
         errno = 0;
         U_TEST_PRINT_LINE("uSockReceiveFrom() of nothing with blocking on"
-                          " took %d millisecond(s)...", (int32_t) elapsedMs);
+                          " took %d millisecond(s)...", elapsedMs);
         U_PORT_TEST_ASSERT(elapsedMs > timeoutMs -
                            U_SOCK_TEST_TIME_MARGIN_MINUS_MS);
         U_PORT_TEST_ASSERT(elapsedMs < timeoutMs +
@@ -2006,7 +2004,7 @@ U_PORT_TEST_FUNCTION("[sock]", "sockNonBlocking")
         U_PORT_TEST_ASSERT(errno == U_SOCK_EWOULDBLOCK);
         errno = 0;
         U_TEST_PRINT_LINE("uSockRead() of nothing with blocking on took"
-                          " %d millisecond(s)...", (int32_t) elapsedMs);
+                          " %d millisecond(s)...", elapsedMs);
         U_PORT_TEST_ASSERT(elapsedMs > timeoutMs -
                            U_SOCK_TEST_TIME_MARGIN_MINUS_MS);
         U_PORT_TEST_ASSERT(elapsedMs < timeoutMs +
@@ -2188,7 +2186,7 @@ U_PORT_TEST_FUNCTION("[sock]", "sockUdpEchoNonPingPong")
                 //lint -e{441} Suppress loop variable not found in
                 // condition: we're using time instead
                 for (y = 0; (offset < sizeof(gSendData) - 1) &&
-                     (uPortGetTickTimeMs() - startTimeMs < 15000); y++) {
+                     !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs, 15000); y++) {
                     z = uSockReceiveFrom(descriptor, NULL,
                                          pDataReceived + offset +
                                          U_SOCK_TEST_GUARD_LENGTH_SIZE_BYTES,

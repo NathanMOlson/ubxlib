@@ -243,7 +243,7 @@ static bool waitFlagOk(I2C_TypeDef *pReg, uint32_t flag,
     bool wait;
 
     while ((wait = (U_PORT_HAL_I2C_GET_FLAG(pReg, flag) != status)) &&
-           (uPortGetTickTimeMs() - startTimeMs < timeoutMs)) {
+           !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs, timeoutMs)) {
     }
 
     return !wait;
@@ -261,7 +261,8 @@ static bool waitTransmitOk(I2C_TypeDef *pReg, uint32_t flag,
     bool ackFailed = false;
 
     while ((wait = (U_PORT_HAL_I2C_GET_FLAG(pReg, flag) == RESET)) &&
-           (uPortGetTickTimeMs() - startTimeMs < timeoutMs) && !ackFailed) {
+           !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs, timeoutMs) &&
+           !ackFailed) {
         if (U_PORT_HAL_I2C_GET_FLAG(pReg, I2C_FLAG_AF) == SET) {
             // If there's been an acknowledgement failure,
             // give up in an organised way

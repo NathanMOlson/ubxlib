@@ -202,7 +202,7 @@ static bool keepGoingCallback(uDeviceHandle_t gnssHandle)
     bool keepGoing = true;
 
     U_PORT_TEST_ASSERT(gnssHandle == gHandles.gnssHandle);
-    if (uPortGetTickTimeMs() > gStopTimeMs) {
+    if (U_PORT_TICK_TIME_BEYOND_STOP_OR_WRAP_MS(gStopTimeMs)) {
         keepGoing = false;
     }
 
@@ -882,7 +882,7 @@ U_PORT_TEST_FUNCTION("[gnssGeofence]", "gnssGeofenceLive")
         U_TEST_PRINT_LINE("calling uGnssPosGet() returned %d.", y);
         U_PORT_TEST_ASSERT(y == 0);
         U_TEST_PRINT_LINE("position establishment took %d second(s).",
-                          (int32_t) (uPortGetTickTimeMs() - startTimeMs) / 1000);
+                          (uPortGetTickTimeMs() - startTimeMs) / 1000);
         U_PORT_TEST_ASSERT(checkCallbackResult(&callbackParams, &gCallbackParameters));
 
         // Repeat for the asynchronous position API

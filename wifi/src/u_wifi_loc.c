@@ -650,7 +650,8 @@ int32_t uWifiLocGet(uDeviceHandle_t wifiHandle,
                             startTimeMs = uPortGetTickTimeMs();
                             while ((pContext->errorCode == (int32_t) U_ERROR_COMMON_TIMEOUT) &&
                                    (((pKeepGoingCallback == NULL) &&
-                                     ((uPortGetTickTimeMs() - startTimeMs) < U_WIFI_LOC_ANSWER_TIMEOUT_SECONDS * 1000)) ||
+                                     !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs,
+                                                                          U_WIFI_LOC_ANSWER_TIMEOUT_SECONDS * 1000)) ||
                                     ((pKeepGoingCallback != NULL) && pKeepGoingCallback(wifiHandle)))) {
                                 uPortTaskBlock(250);
                             }

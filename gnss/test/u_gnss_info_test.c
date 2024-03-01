@@ -295,16 +295,17 @@ U_PORT_TEST_FUNCTION("[gnssInfo]", "gnssInfoTime")
                           U_GNSS_TIME_TEST_TIMEOUT_SECONDS);
         startTimeMs = uPortGetTickTimeMs();
         while ((y < 0) &&
-               (uPortGetTickTimeMs() - startTimeMs < (U_GNSS_TIME_TEST_TIMEOUT_SECONDS * 1000))) {
+               !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs,
+                                                    U_GNSS_TIME_TEST_TIMEOUT_SECONDS * 1000)) {
             y = uGnssInfoGetTimeUtc(gnssHandle);
         }
         if (y > 0) {
             U_TEST_PRINT_LINE("UTC time according to GNSS is %d (took %d second(s)"
                               " to establish).", (int32_t) y,
-                              (int32_t) (uPortGetTickTimeMs() - startTimeMs) / 1000);
+                              (uPortGetTickTimeMs() - startTimeMs) / 1000);
         } else {
             U_TEST_PRINT_LINE("could not get UTC time from GNSS after %d second(s) (%d).",
-                              (int32_t) (uPortGetTickTimeMs() - startTimeMs) / 1000,
+                              (uPortGetTickTimeMs() - startTimeMs) / 1000,
                               (int32_t) y);
         }
         U_PORT_TEST_ASSERT(y > U_GNSS_TEST_MIN_UTC_TIME);

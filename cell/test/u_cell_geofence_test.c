@@ -176,7 +176,7 @@ static bool keepGoingCallback(uDeviceHandle_t cellHandle)
     bool keepGoing = true;
 
     U_PORT_TEST_ASSERT(cellHandle == gHandles.cellHandle);
-    if (uPortGetTickTimeMs() > gStopTimeMs) {
+    if (U_PORT_TICK_TIME_BEYOND_STOP_OR_WRAP_MS(gStopTimeMs)) {
         keepGoing = false;
     }
 
@@ -377,7 +377,7 @@ U_PORT_TEST_FUNCTION("[cellGeofence]", "cellGeofenceLive")
                       gpPositionStateString[gPositionStateB]);
     if (x == 0) {
     U_TEST_PRINT_LINE("location establishment took %d second(s).",
-                      (int32_t) (uPortGetTickTimeMs() - startTime) / 1000);
+                      (uPortGetTickTimeMs() - startTime) / 1000);
     }
     U_PORT_TEST_ASSERT(x == 0);
 
@@ -418,7 +418,7 @@ U_PORT_TEST_FUNCTION("[cellGeofence]", "cellGeofenceLive")
         }
         if (gErrorCode == 2) {
             U_TEST_PRINT_LINE("location establishment took %d second(s).",
-                              (int32_t) (uPortGetTickTimeMs() - startTime) / 1000);
+                              (uPortGetTickTimeMs() - startTime) / 1000);
             U_TEST_PRINT_LINE("result was %d, gErrorCode was %d.", x, gErrorCode);
             U_TEST_PRINT_LINE("%s fence A, %s fence B.",
                               gpPositionStateString[gPositionStateA],

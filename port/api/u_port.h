@@ -90,6 +90,65 @@ extern "C" {
     }                                                                   \
 }
 
+/** Perform a tick timeout check in a way that will behave predictably
+ * across a tick-counter wrap.  The return value of uPortGetTickTimeMs()
+ * is an int32_t, which will wrap in roughly 25 days.  When it does so
+ * it will go negative, i.e. from INT32_MAX to INT32_MIN.  This macro
+ * performs a timeout comparison with signed modulo-32 arithmetic such
+ * that:
+ *
+ * - if the given time has elapsed since the start time then true is
+ *   returned,
+ * - if the tick counter has wrapped then true is returned,
+ * - else false is returned.
+ *
+ * This way no timeout comparison will ever get "stuck" if the tick
+ * counter wraps underneath it; it could, of course, be shorter than
+ * the requested timeout, but only once every 25 days.
+ *
+ * Where you would have had:
+ *
+ * ```
+ *    if (uPortGetTickTimeMs() - startTimeMs > timeoutMs) {
+ *        // Do something because the timeout has expired
+ *    }
+ * ```
+ *
+ * ...then do this instead:
+ *
+ * ```
+ *    if (U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs, timeoutMs)) {
+ *        // Do something because the timeout has expired
+ *    }
+ * ```
+ *
+ * If you only have a stop time, not a start time and a timeout, use
+ * #U_PORT_TICK_TIME_BEYOND_STOP_OR_WRAP_MS.
+ */
+#define U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeInt32Ms, timeoutInt32Ms) \
+        (uPortGetTickTimeMs() - (int32_t) (startTimeInt32Ms) > (int32_t) (timeoutInt32Ms))
+
+/** Like #U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS but for the case where
+ * you have a stop time rather than a start time and a timeout.
+ * Where you would have had:
+ *
+ * ```
+ *    if (uPortGetTickTimeMs() > stopTimeMs) {
+ *        // Do something because we are beyond the stop time
+ *    }
+ * ```
+ *
+ * ...then call this macro with the stop time instead:
+ *
+ * ```
+ *    if (U_PORT_TICK_TIME_BEYOND_STOP_OR_WRAP_MS(stopTimeMs)) {
+ *        // Do something because we are beyond the stop time
+ *    }
+ * ```
+ */
+#define U_PORT_TICK_TIME_BEYOND_STOP_OR_WRAP_MS(stopTimeInt32Ms) \
+        (uPortGetTickTimeMs() - (int32_t) (stopTimeInt32Ms) > 0)
+
 /* ----------------------------------------------------------------
  * TYPES
  * -------------------------------------------------------------- */

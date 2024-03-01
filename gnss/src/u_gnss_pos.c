@@ -312,7 +312,8 @@ static void posGetTask(void *pParameter)
 
     while ((taskParameters.pInstance->posTaskFlags & U_GNSS_POS_TASK_FLAG_KEEP_GOING) &&
            (errorCode == (int32_t) U_ERROR_COMMON_TIMEOUT) &&
-           ((uPortGetTickTimeMs() - startTimeMs) / 1000 < U_GNSS_POS_TIMEOUT_SECONDS)) {
+           !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs,
+                                                U_GNSS_POS_TIMEOUT_SECONDS * 1000)) {
         // Call posGet() to do the work
         errorCode = posGet(taskParameters.pInstance,
                            &latitudeX1e7,
@@ -480,7 +481,8 @@ int32_t uGnssPosGet(uDeviceHandle_t gnssHandle,
             errorCode = (int32_t) U_ERROR_COMMON_TIMEOUT;
             while ((errorCode == (int32_t) U_ERROR_COMMON_TIMEOUT) &&
                    (((pKeepGoingCallback == NULL) &&
-                     (uPortGetTickTimeMs() - startTimeMs) / 1000 < U_GNSS_POS_TIMEOUT_SECONDS) ||
+                     !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs,
+                                                          U_GNSS_POS_TIMEOUT_SECONDS * 1000)) ||
                     ((pKeepGoingCallback != NULL) && pKeepGoingCallback(gnssHandle)))) {
                 // Call posGet() to do the work
                 errorCode = posGet(pInstance,
@@ -943,7 +945,8 @@ int32_t uGnssPosGetRrlp(uDeviceHandle_t gnssHandle, char *pBuffer,
             errorCodeOrLength = (int32_t) U_ERROR_COMMON_TIMEOUT;
             while ((errorCodeOrLength == (int32_t) U_ERROR_COMMON_TIMEOUT) &&
                    (((pKeepGoingCallback == NULL) &&
-                     (uPortGetTickTimeMs() - startTimeMs) / 1000 < U_GNSS_POS_TIMEOUT_SECONDS) ||
+                     !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs,
+                                                          U_GNSS_POS_TIMEOUT_SECONDS * 1000)) ||
                     ((pKeepGoingCallback != NULL) && pKeepGoingCallback(gnssHandle)))) {
 
                 numBytes = uGnssPrivateSendReceiveUbxMessage(pInstance,

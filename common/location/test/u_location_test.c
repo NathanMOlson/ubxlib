@@ -177,7 +177,7 @@ static bool keepGoingCallback(uDeviceHandle_t devHandle)
     bool keepGoing = true;
 
     U_PORT_TEST_ASSERT((gDevHandle == NULL) || (devHandle == gDevHandle));
-    if (uPortGetTickTimeMs() > gStopTimeMs) {
+    if (U_PORT_TICK_TIME_BEYOND_STOP_OR_WRAP_MS(gStopTimeMs)) {
         keepGoing = false;
     }
 
@@ -295,7 +295,8 @@ static bool httpPostCheck(uLocationType_t locationType,
         success = false;
         startTimeMs = uPortGetTickTimeMs();
         while ((*pHttpStatusCode != 200) &&
-               (uPortGetTickTimeMs() - startTimeMs < U_LOCATION_TEST_HTTP_TIMEOUT_SECONDS * 1000)) {
+               !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs,
+                                                    U_LOCATION_TEST_HTTP_TIMEOUT_SECONDS * 1000)) {
             uPortTaskBlock(100);
         }
         if (*pHttpStatusCode != 200) {
@@ -381,7 +382,7 @@ static void testBlocking(uDeviceHandle_t devHandle,
             }
         }
         U_TEST_PRINT_LINE("location establishment took %d second(s).",
-                          (int32_t) (uPortGetTickTimeMs() - startTimeMs) / 1000);
+                          (uPortGetTickTimeMs() - startTimeMs) / 1000);
         // If we are running on a test cellular network we won't get position but
         // we should always get time
         if ((location.radiusMillimetres > 0) &&
@@ -489,7 +490,7 @@ static void testOneShot(uDeviceHandle_t devHandle,
                                   " one-shot API...",
                                   timeoutMs);
                 while ((gErrorCode == INT_MIN) &&
-                       (uPortGetTickTimeMs() - startTimeMs < timeoutMs)) {
+                       !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs, timeoutMs)) {
                     // Location establishment status is only supported for cell locate
                     y = uLocationGetStatus(devHandle);
                     if (locationType == U_LOCATION_TYPE_CLOUD_CELL_LOCATE) {
@@ -502,7 +503,7 @@ static void testOneShot(uDeviceHandle_t devHandle,
 
                 if (gErrorCode == 0) {
                     U_TEST_PRINT_LINE("location establishment took %d second(s).",
-                                      (int32_t) (uPortGetTickTimeMs() - startTimeMs) / 1000);
+                                      (uPortGetTickTimeMs() - startTimeMs) / 1000);
                     // If we are running on a cellular test network we might not
                     // get position but we should always get time
                     U_PORT_TEST_ASSERT(gDevHandle == devHandle);
@@ -621,7 +622,7 @@ static void testContinuous(uDeviceHandle_t devHandle,
                               timeoutMs * U_LOCATION_TEST_CFG_CONTINUOUS_COUNT,
                               U_LOCATION_TEST_CFG_CONTINUOUS_COUNT);
             while ((gCount < U_LOCATION_TEST_CFG_CONTINUOUS_COUNT) &&
-                   (uPortGetTickTimeMs() - startTimeMs < timeoutMs)) {
+                   !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs, timeoutMs)) {
                 // Location establishment status is only supported for cell locate
                 y = uLocationGetStatus(devHandle);
                 if (locationType == U_LOCATION_TYPE_CLOUD_CELL_LOCATE) {
@@ -639,7 +640,7 @@ static void testContinuous(uDeviceHandle_t devHandle,
                               startTimeMs, uPortGetTickTimeMs(), gCount);
             if (gCount >= U_LOCATION_TEST_CFG_CONTINUOUS_COUNT) {
                 U_TEST_PRINT_LINE("took %d second(s) to get location %d time(s).",
-                                  (int32_t) (uPortGetTickTimeMs() - startTimeMs) / 1000,
+                                  (uPortGetTickTimeMs() - startTimeMs) / 1000,
                                   gCount);
                 // If we are running on a cellular test network we might not
                 // get position but we should always get time

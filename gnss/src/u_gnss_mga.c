@@ -430,7 +430,9 @@ static int32_t ubxMgaSendWaitAck(uGnssPrivateInstance_t *pInstance,
                             }
                         }
                     }
-                } while ((ackState == 0) && (uPortGetTickTimeMs() - startTimeMs < pInstance->timeoutMs));
+                } while ((ackState == 0) &&
+                         !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs,
+                                                              pInstance->timeoutMs));
                 if (ackState == 2) {
                     errorCode = (int32_t) U_ERROR_COMMON_SUCCESS;
                 } else if (ackState == 1) {
@@ -1100,7 +1102,8 @@ int32_t uGnssMgaGetDatabase(uDeviceHandle_t gnssHandle,
                         errorCodeOrLength = (int32_t) U_ERROR_COMMON_TIMEOUT;
                         startTimeMs = uPortGetTickTimeMs();
                         while (context.keepGoing && (context.errorCodeOrLength >= 0) &&
-                               (uPortGetTickTimeMs() - startTimeMs < U_GNSS_MGA_DATABASE_READ_TIMEOUT_MS)) {
+                               !U_PORT_TICK_TIME_EXPIRED_OR_WRAP_MS(startTimeMs,
+                                                                    U_GNSS_MGA_DATABASE_READ_TIMEOUT_MS)) {
                             uPortTaskBlock(250);
                         }
                         if (!context.keepGoing) {
