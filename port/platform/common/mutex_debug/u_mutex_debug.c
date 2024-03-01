@@ -378,7 +378,7 @@ static void watchdogTask(void *pParam)
 {
     uMutexInfo_t *pMutexInfo;
     uMutexFunctionInfo_t *pWaiting;
-    int64_t calledMs = 0;
+    int32_t calledMs = 0;
     bool callCallback = false;
 
     (void) pParam;

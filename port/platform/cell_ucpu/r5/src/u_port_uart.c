@@ -813,7 +813,7 @@ int32_t uPortUartEventTrySend(int32_t handle, uint32_t eventBitMap,
                               int32_t delayMs)
 {
     int32_t errorCode = U_ERROR_COMMON_NOT_INITIALISED;
-    int64_t startTime = uPortGetTickTimeMs();
+    int32_t startTimeMs = uPortGetTickTimeMs();
 
     if ((gModemUartMutex != NULL) &&
         (!gModemUartContext.markedForDeletion)) {
@@ -831,7 +831,7 @@ int32_t uPortUartEventTrySend(int32_t handle, uint32_t eventBitMap,
                                                    NULL, 0);
                 uPortTaskBlock(U_CFG_OS_YIELD_MS);
             } while ((errorCode != 0) &&
-                     (uPortGetTickTimeMs() - startTime < delayMs));
+                     (uPortGetTickTimeMs() - startTimeMs < delayMs));
         }
     }
 

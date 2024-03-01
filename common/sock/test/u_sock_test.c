@@ -559,7 +559,7 @@ static int32_t doUdpEchoBasic(uSockDescriptor_t descriptor,
     int32_t sentSizeBytes;
     int32_t receivedSizeBytes = 0;
 #if U_CFG_ENABLE_LOGGING
-    int64_t timeNowMs;
+    int32_t timeNowMs;
 #endif
 
     U_PORT_TEST_ASSERT(pDataReceived != NULL);
@@ -580,7 +580,7 @@ static int32_t doUdpEchoBasic(uSockDescriptor_t descriptor,
         }
         if (sentSizeBytes == (int32_t)sendSizeBytes) {
 #if U_CFG_ENABLE_LOGGING
-            timeNowMs = (int32_t) uPortGetTickTimeMs();
+            timeNowMs = uPortGetTickTimeMs();
 #endif
             //lint -e(668) Suppress possible use of NULL pointer
             // for pDataReceived (it is checked above)
@@ -597,7 +597,7 @@ static int32_t doUdpEchoBasic(uSockDescriptor_t descriptor,
                 uPortLog(".\n");
             } else {
                 U_TEST_PRINT_LINE("received no UDP data back after %d ms.",
-                                  (int32_t) (uPortGetTickTimeMs() - timeNowMs));
+                                  uPortGetTickTimeMs() - timeNowMs);
                 // Reset errno 'cos we're going to retry and subsequent things might be upset by it
                 errno = 0;
             }

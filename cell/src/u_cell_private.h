@@ -438,7 +438,7 @@ typedef struct uCellPrivateInstance_t {
                                                        been requested (set
                                                        to zeroes for automatic
                                                        mode). */
-    int64_t lastCfunFlipTimeMs; /**< The last time a flip of state from
+    int32_t lastCfunFlipTimeMs; /**< The last time a flip of state from
                                      "off" (AT+CFUN=0/4) to "on" (AT+CFUN=1)
                                      or back was performed. */
     int32_t lastDtrPinToggleTimeMs; /**< The last time DTR was toggled for power-saving. */

@@ -94,7 +94,7 @@
 #ifdef U_CFG_SECURITY_DEVICE_PROFILE_UID
 /** Used for keepGoingCallback() timeout.
  */
-static int64_t gStopTimeMs;
+static int32_t gStopTimeMs;
 #endif
 
 /* ----------------------------------------------------------------
@@ -224,8 +224,7 @@ U_PORT_TEST_FUNCTION("[security]", "securitySeal")
                                       " number \"%s\"...",
                                       U_PORT_STRINGIFY_QUOTED(U_CFG_SECURITY_DEVICE_PROFILE_UID),
                                       serialNumber);
-                    gStopTimeMs = uPortGetTickTimeMs() +
-                                  (U_SECURITY_TEST_SEAL_TIMEOUT_SECONDS * 1000);
+                    gStopTimeMs = uPortGetTickTimeMs() + (U_SECURITY_TEST_SEAL_TIMEOUT_SECONDS * 1000);
                     if (uSecuritySealSet(devHandle,
                                          U_PORT_STRINGIFY_QUOTED(U_CFG_SECURITY_DEVICE_PROFILE_UID),
                                          serialNumber, keepGoingCallback) == 0) {

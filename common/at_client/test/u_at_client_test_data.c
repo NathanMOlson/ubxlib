@@ -869,7 +869,7 @@ static int32_t handleReadOnError(uAtClientHandle_t atClientHandle,
 {
     int32_t lastError;
     uint64_t uint64;
-    int64_t startTime;
+    int32_t startTimeMs;
     int32_t duration;
     const uAtClientTestEchoError_t *pError;
 
@@ -877,7 +877,7 @@ static int32_t handleReadOnError(uAtClientHandle_t atClientHandle,
     (void) index;
 #endif
 
-    startTime = uPortGetTickTimeMs();
+    startTimeMs = uPortGetTickTimeMs();
     pError = (const uAtClientTestEchoError_t *) pParameter;
 
     U_TEST_PRINT_LINE_X("checking that parameter reads return error when"
@@ -940,7 +940,7 @@ static int32_t handleReadOnError(uAtClientHandle_t atClientHandle,
     }
 
     // The errors should be returned within the guard times
-    duration = (int32_t) (uPortGetTickTimeMs() - startTime);
+    duration = uPortGetTickTimeMs() - startTimeMs;
     if (lastError == 0) {
         if (duration < pError->timeMinMs) {
             U_TEST_PRINT_LINE_X("reads took %d ms when a minimum of %d ms was"

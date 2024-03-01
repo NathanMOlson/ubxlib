@@ -232,7 +232,7 @@ static int32_t sendEvent(uCellMuxPrivateContext_t *pContext,
     uCellMuxPrivateEventCallback_t *pEventCallback;
     uCellMuxEventTrampoline_t trampolineData;
     uint32_t eventCallbackFilter;
-    int64_t startTime = uPortGetTickTimeMs();
+    int32_t startTimeMs = uPortGetTickTimeMs();
     bool irqSupported;
 
     if ((pContext != NULL) && (pChannelContext != NULL) && !pChannelContext->markedForDeletion) {
@@ -252,7 +252,7 @@ static int32_t sendEvent(uCellMuxPrivateContext_t *pContext,
                     uPortTaskBlock(U_CFG_OS_YIELD_MS);
                     irqSupported = (errorCode != (int32_t) U_ERROR_COMMON_NOT_IMPLEMENTED) &&
                                    (errorCode != (int32_t) U_ERROR_COMMON_NOT_SUPPORTED);
-                } while (irqSupported && (uPortGetTickTimeMs() - startTime < delayMs));
+                } while (irqSupported && (uPortGetTickTimeMs() - startTimeMs < delayMs));
 
                 if (!irqSupported) {
                     // If IRQ is not supported, just gotta do the normal send

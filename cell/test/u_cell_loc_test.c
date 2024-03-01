@@ -196,7 +196,7 @@ static const char *gpAssistNowDataType[] = {"U_GNSS_MGA_DATA_TYPE_EPHEMERIS",
 
 /** Used for keepGoingCallback() timeout.
  */
-static int64_t gStopTimeMs;
+static int32_t gStopTimeMs;
 
 /** Cell handle as seen by posCallback().
  */
@@ -649,7 +649,7 @@ U_PORT_TEST_FUNCTION("[cellLoc]", "cellLocLoc")
 #if defined(U_CFG_APP_CELL_LOC_AUTHENTICATION_TOKEN) && defined(U_CFG_TEST_CELL_LOCATE)
     uDeviceHandle_t cellHandle;
     int32_t resourceCount;
-    int64_t startTime;
+    int32_t startTimeMs;
     int32_t latitudeX1e7 = INT_MIN;
     int32_t longitudeX1e7 = INT_MIN;
     int32_t altitudeMillimetres = INT_MIN;
@@ -770,8 +770,8 @@ U_PORT_TEST_FUNCTION("[cellLoc]", "cellLocLoc")
     // location again quickly after returning an answer
     for (int32_t y = 3; (y > 0) && (gErrorCode != 0); y--) {
         gErrorCode = 0xFFFFFFFF;
-        gStopTimeMs = startTime + U_CELL_LOC_TEST_TIMEOUT_SECONDS * 1000;
-        startTime = uPortGetTickTimeMs();
+        gStopTimeMs = startTimeMs + U_CELL_LOC_TEST_TIMEOUT_SECONDS * 1000;
+        startTimeMs = uPortGetTickTimeMs();
         U_PORT_TEST_ASSERT(uCellLocGetStart(cellHandle, posCallback) == 0);
         U_TEST_PRINT_LINE("waiting up to %d second(s) for results from asynchonous API...",
                           U_CELL_LOC_TEST_TIMEOUT_SECONDS);

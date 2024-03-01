@@ -1730,7 +1730,7 @@ int32_t uCellLocGet(uDeviceHandle_t cellHandle,
     uCellPrivateLocContext_t *pContext;
     uCellLocFixDataStorage_t *pFixDataStorage;
     volatile uCellLocFixDataStorageBlock_t fixDataStorageBlock = {0};
-    int64_t startTime;
+    int32_t startTimeMs;
 
     fixDataStorageBlock.errorCode = (int32_t) U_ERROR_COMMON_TIMEOUT;
 
@@ -1777,10 +1777,10 @@ int32_t uCellLocGet(uDeviceHandle_t cellHandle,
                 uPortLog("U_CELL_LOC: waiting for the answer...\n");
                 // Wait for the callback called by the URC to set
                 // errorCode inside our block to success
-                startTime = uPortGetTickTimeMs();
+                startTimeMs = uPortGetTickTimeMs();
                 while ((fixDataStorageBlock.errorCode == (int32_t) U_ERROR_COMMON_TIMEOUT) &&
                        (((pKeepGoingCallback == NULL) &&
-                         (uPortGetTickTimeMs() - startTime) / 1000 < U_CELL_LOC_TIMEOUT_SECONDS) ||
+                         (uPortGetTickTimeMs() - startTimeMs) / 1000 < U_CELL_LOC_TIMEOUT_SECONDS) ||
                         ((pKeepGoingCallback != NULL) && pKeepGoingCallback(cellHandle)))) {
                     // Relax a little
                     uPortTaskBlock(1000);

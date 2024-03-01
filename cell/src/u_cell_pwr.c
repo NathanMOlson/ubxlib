@@ -2265,7 +2265,7 @@ int32_t uCellPwrResetHard(uDeviceHandle_t cellHandle, int32_t pinReset)
     uCellPrivateInstance_t *pInstance;
     int32_t platformError;
     uPortGpioConfig_t gpioConfig;
-    int64_t startTime;
+    int32_t startTimeMs;
     int32_t resetHoldMilliseconds;
     int32_t pinResetToggleToState = (pinReset & U_CELL_PIN_INVERTED) ?
                                     !U_CELL_RESET_PIN_TOGGLE_TO_STATE : U_CELL_RESET_PIN_TOGGLE_TO_STATE;
@@ -2321,8 +2321,8 @@ int32_t uCellPwrResetHard(uDeviceHandle_t cellHandle, int32_t pinReset)
                 if (platformError == 0) {
                     // We have rebooted
                     pInstance->rebootIsRequired = false;
-                    startTime = uPortGetTickTimeMs();
-                    while (uPortGetTickTimeMs() - startTime < resetHoldMilliseconds) {
+                    startTimeMs = uPortGetTickTimeMs();
+                    while (uPortGetTickTimeMs() - startTimeMs < resetHoldMilliseconds) {
                         uPortTaskBlock(100);
                     }
                     // Set the pin back to the "non RESET" state

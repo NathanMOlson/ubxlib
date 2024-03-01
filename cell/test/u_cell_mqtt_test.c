@@ -128,7 +128,7 @@
 
 /** Used for keepGoingCallback() timeout.
  */
-static int64_t gStopTimeMs;
+static int32_t gStopTimeMs;
 
 /** Generic handles.
  */
@@ -219,8 +219,7 @@ U_PORT_TEST_FUNCTION("[cellMqtt]", "cellMqtt")
 
         // Make a cellular connection, since we will need to do a
         // DNS look-up on the MQTT broker domain name
-        gStopTimeMs = uPortGetTickTimeMs() +
-                      (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
+        gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
         x = uCellNetConnect(cellHandle, NULL,
 #ifdef U_CELL_TEST_CFG_APN
                             U_PORT_STRINGIFY_QUOTED(U_CELL_TEST_CFG_APN),
@@ -534,8 +533,7 @@ U_PORT_TEST_FUNCTION("[cellMqtt]", "cellMqttSn")
 
         // Make a cellular connection, since we will need to do a
         // DNS look-up on the MQTT-SN broker domain name
-        gStopTimeMs = uPortGetTickTimeMs() +
-                      (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
+        gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
         x = uCellNetConnect(cellHandle, NULL,
 #ifdef U_CELL_TEST_CFG_APN
                             U_PORT_STRINGIFY_QUOTED(U_CELL_TEST_CFG_APN),

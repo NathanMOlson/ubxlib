@@ -184,7 +184,7 @@ static uPortSemaphoreHandle_t gBleConnectionSem = NULL;
 
 /** Used for keepGoingCallback() timeout.
  */
-static int64_t gStopTimeMs;
+static int32_t gStopTimeMs;
 
 /** Keep track of the current network handle so that the
  * keepGoingCallback() can check it.
@@ -752,7 +752,7 @@ U_PORT_TEST_FUNCTION("[network]", "networkLoc")
     const uLocationTestCfg_t *pLocationCfg;
     int32_t y;
     uLocation_t location;
-    int64_t startTime;
+    int32_t startTimeMs;
     int32_t resourceCount;
 
     // In case a previous test failed
@@ -799,8 +799,8 @@ U_PORT_TEST_FUNCTION("[network]", "networkLoc")
                     // Just take the first one, we don't care which as this
                     // is a network test not a location test
                     pLocationCfg = gpULocationTestCfg[pTmp->networkType]->pCfgData[0];
-                    startTime = uPortGetTickTimeMs();
-                    gStopTimeMs = startTime + U_LOCATION_TEST_CFG_TIMEOUT_SECONDS * 1000;
+                    startTimeMs = uPortGetTickTimeMs();
+                    gStopTimeMs = startTimeMs + (U_LOCATION_TEST_CFG_TIMEOUT_SECONDS * 1000);
                     uLocationTestResetLocation(&location);
                     U_TEST_PRINT_LINE("getting location using %s.",
                                       gpULocationTestTypeStr[pLocationCfg->locationType]);
@@ -811,7 +811,7 @@ U_PORT_TEST_FUNCTION("[network]", "networkLoc")
                                      &location, keepGoingCallback);
                     if (y == 0) {
                         U_TEST_PRINT_LINE("location establishment took %d second(s).",
-                                          (int32_t) (uPortGetTickTimeMs() - startTime) / 1000);
+                                          (int32_t) (uPortGetTickTimeMs() - startTimeMs) / 1000);
                     }
                     // If we are running on a local cellular network we won't get position but
                     // we should always get time

@@ -147,7 +147,7 @@
 
 /** Used for keepGoingCallback() timeout.
  */
-static int64_t gStopTimeMs;
+static int32_t gStopTimeMs;
 
 /**  The test MQTT context.
  */
@@ -379,8 +379,7 @@ U_PORT_TEST_FUNCTION("[mqttClient]", "mqttClient")
                 // Connect it
                 U_TEST_PRINT_LINE_MQTT("connecting to \"%s\"...", connection.pBrokerNameStr);
                 startTimeMs = uPortGetTickTimeMs();
-                gStopTimeMs = startTimeMs +
-                              (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
+                gStopTimeMs = startTimeMs + (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
                 y = uMqttClientConnect(gpMqttContextA, &connection);
                 z = uMqttClientOpenResetLastError();
                 if (y == 0) {
@@ -401,8 +400,7 @@ U_PORT_TEST_FUNCTION("[mqttClient]", "mqttClient")
 
                     U_TEST_PRINT_LINE_MQTT("subscribing to topic \"%s\"...", pTopicOut);
                     startTimeMs = uPortGetTickTimeMs();
-                    gStopTimeMs = startTimeMs +
-                                  (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
+                    gStopTimeMs = startTimeMs + (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
                     y = uMqttClientSubscribe(gpMqttContextA, pTopicOut, U_MQTT_QOS_EXACTLY_ONCE);
                     if (y >= 0) {
                         U_TEST_PRINT_LINE_MQTT("subscribe successful after %d ms, QoS %d.",
@@ -437,8 +435,7 @@ U_PORT_TEST_FUNCTION("[mqttClient]", "mqttClient")
                     U_TEST_PRINT_LINE_MQTT("publishing %d byte(s) to topic \"%s\"...",
                                            U_MQTT_CLIENT_TEST_PUBLISH_MAX_LENGTH_BYTES, pTopicOut);
                     startTimeMs = uPortGetTickTimeMs();
-                    gStopTimeMs = startTimeMs +
-                                  (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
+                    gStopTimeMs = startTimeMs + (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
                     // Fill in the outgoing message buffer with all possible things
                     s = 0;
                     y = U_MQTT_CLIENT_TEST_PUBLISH_MAX_LENGTH_BYTES;
@@ -546,8 +543,7 @@ U_PORT_TEST_FUNCTION("[mqttClient]", "mqttClient")
 
                     // Cancel the subscribe
                     U_TEST_PRINT_LINE_MQTT("unsubscribing from topic \"%s\"...", pTopicOut);
-                    gStopTimeMs = uPortGetTickTimeMs() +
-                                  (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
+                    gStopTimeMs = uPortGetTickTimeMs() + (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
                     U_PORT_TEST_ASSERT(uMqttClientUnsubscribe(gpMqttContextA, pTopicOut) == 0);
 
                     // Remove the callback
@@ -718,8 +714,7 @@ U_PORT_TEST_FUNCTION("[mqttClient]", "mqttClientSn")
             // Connect it
             U_TEST_PRINT_LINE_MQTTSN("connecting to \"%s\"...", connection.pBrokerNameStr);
             startTimeMs = uPortGetTickTimeMs();
-            gStopTimeMs = startTimeMs +
-                          (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
+            gStopTimeMs = startTimeMs + (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
             y = uMqttClientConnect(gpMqttContextA, &connection);
             z = uMqttClientOpenResetLastError();
             if (y == 0) {
@@ -740,8 +735,7 @@ U_PORT_TEST_FUNCTION("[mqttClient]", "mqttClientSn")
 
                 U_TEST_PRINT_LINE_MQTTSN("subscribing to MQTT topic \"%s\"...", pTopicNameOutMqtt);
                 startTimeMs = uPortGetTickTimeMs();
-                gStopTimeMs = startTimeMs +
-                              (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
+                gStopTimeMs = startTimeMs + (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
                 memset(&topicNameOut, 0xFF, sizeof(topicNameOut));
                 y = uMqttClientSnSubscribeNormalTopic(gpMqttContextA, pTopicNameOutMqtt,
                                                       U_MQTT_QOS_EXACTLY_ONCE, &topicNameOut);
@@ -781,8 +775,7 @@ U_PORT_TEST_FUNCTION("[mqttClient]", "mqttClientSn")
                                              U_MQTT_CLIENT_TEST_PUBLISH_MAX_LENGTH_BYTES,
                                              topicNameOut.name.id);
                     startTimeMs = uPortGetTickTimeMs();
-                    gStopTimeMs = startTimeMs +
-                                  (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
+                    gStopTimeMs = startTimeMs + (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
                     // Fill in the outgoing message buffer with all possible things
                     s = 0;
                     y = U_MQTT_CLIENT_TEST_PUBLISH_MAX_LENGTH_BYTES;
@@ -886,8 +879,7 @@ U_PORT_TEST_FUNCTION("[mqttClient]", "mqttClientSn")
 
                 // Cancel the subscribe
                 U_TEST_PRINT_LINE_MQTTSN("unsubscribing from topic \"%d\"...", topicNameOut.name.id);
-                gStopTimeMs = uPortGetTickTimeMs() +
-                              (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
+                gStopTimeMs = uPortGetTickTimeMs() + (U_MQTT_CLIENT_RESPONSE_WAIT_SECONDS * 1000);
                 U_PORT_TEST_ASSERT(uMqttClientSnUnsubscribeNormalTopic(gpMqttContextA, pTopicNameOutMqtt) == 0);
 
                 // Remove the callback

@@ -114,7 +114,7 @@ typedef struct {
 
 /** Used for keepGoingCallback() timeout.
  */
-static int64_t gStopTimeMs;
+static int32_t gStopTimeMs;
 
 /** Generic handles.
  */
@@ -588,8 +588,7 @@ U_PORT_TEST_FUNCTION("[cellSock]", "cellSockBasic")
     // for pModule from now on
 
     // Connect to the network
-    gStopTimeMs = uPortGetTickTimeMs() +
-                  (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
+    gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
     y = uCellNetConnect(cellHandle, NULL,
 #ifdef U_CELL_TEST_CFG_APN
                         U_PORT_STRINGIFY_QUOTED(U_CELL_TEST_CFG_APN),
@@ -960,8 +959,7 @@ U_PORT_TEST_FUNCTION("[cellSock]", "cellSockOptionSetGet")
     cellHandle = gHandles.cellHandle;
 
     // Connect to the network
-    gStopTimeMs = uPortGetTickTimeMs() +
-                  (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
+    gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
     y = uCellNetConnect(cellHandle, NULL,
 #ifdef U_CELL_TEST_CFG_APN
                         U_PORT_STRINGIFY_QUOTED(U_CELL_TEST_CFG_APN),

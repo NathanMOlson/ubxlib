@@ -159,6 +159,8 @@ int32_t uShortRangeEdmStreamAtRead(int32_t handle, void *pBuffer,
  * @param timeoutMs   timeout in ms. If timeout is reached, sending is
  *                    interrupted and the actual number of bytes sent returned.
  *                    Reaching timeout is not considered an error.
+ *                    Important: despite being a uint32_t variable,
+ *                    the maximum value is INT32_MAX, not UINT32_MAX.
  * @return            the number of bytes sent or negative
  *                    error code.
  */

@@ -192,7 +192,7 @@ static uCellTestPrivate_t gHandles = U_CELL_TEST_PRIVATE_DEFAULTS;
   !defined(U_CFG_CELL_DISABLE_UART_POWER_SAVING)
 /** Used for keepGoingCallback() timeout.
  */
-static int64_t gStopTimeMs;
+static int32_t gStopTimeMs;
 
 /** A variable to track errors in the callbacks.
  */
@@ -350,8 +350,7 @@ static void testPowerAliveVInt(uCellTestPrivate_t *pHandles,
             // called here as we've no control over how long the
             // module takes to power off.
             pKeepGoingCallback = keepGoingCallback;
-            gStopTimeMs = uPortGetTickTimeMs() +
-                          (((int64_t) pModule->powerDownWaitSeconds) * 1000);
+            gStopTimeMs = uPortGetTickTimeMs() + ((pModule->powerDownWaitSeconds) * 1000);
         }
 #  if U_CFG_APP_PIN_CELL_VINT < 0
         timeMs = uPortGetTickTimeMs();
@@ -461,8 +460,7 @@ static void wakeCallback(uDeviceHandle_t cellHandle, void *pParam)
 // Connect to a cellular network.
 static int32_t connectNetwork(uDeviceHandle_t cellHandle)
 {
-    gStopTimeMs = uPortGetTickTimeMs() +
-                  (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
+    gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
     return uCellNetConnect(cellHandle, NULL,
 # ifdef U_CELL_TEST_CFG_APN
                            U_PORT_STRINGIFY_QUOTED(U_CELL_TEST_CFG_APN),

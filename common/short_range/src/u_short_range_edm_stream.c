@@ -23,6 +23,7 @@
 #endif
 
 //lint -efile(766, ctype.h)
+#include "limits.h"    // INT32_MAX
 #include "stddef.h"    // NULL, size_t etc.
 #include "stdint.h"    // int32_t etc.
 #include "stdbool.h"
@@ -1388,7 +1389,8 @@ int32_t uShortRangeEdmStreamWrite(int32_t handle, int32_t channel,
         U_PORT_MUTEX_LOCK(gMutex);
         sizeOrErrorCode = (int32_t)U_ERROR_COMMON_INVALID_PARAMETER;
         if (gEdmStream.handle == handle && channel >= 0 &&
-            (pBuffer != NULL || sizeBytes == 0)) {
+            (pBuffer != NULL || sizeBytes == 0) &&
+            (timeoutMs <= INT32_MAX)) {
             uShortRangeEdmStreamConnections_t *pConnection = findConnection(channel);
             if (pConnection != NULL) {
                 int32_t sent;
@@ -1396,8 +1398,8 @@ int32_t uShortRangeEdmStreamWrite(int32_t handle, int32_t channel,
                 char head[U_SHORT_RANGE_EDM_DATA_HEAD_SIZE];
                 char tail[U_SHORT_RANGE_EDM_TAIL_SIZE];
                 sizeOrErrorCode = 0;
-                int64_t startTime = uPortGetTickTimeMs();
-                int64_t endTime;
+                int32_t startTimeMs = uPortGetTickTimeMs();
+                int32_t endTimeMs;
 
                 do {
                     send = ((int32_t)sizeBytes - sizeOrErrorCode);
@@ -1429,9 +1431,9 @@ int32_t uShortRangeEdmStreamWrite(int32_t handle, int32_t channel,
                     } else {
                         sizeOrErrorCode += send;
                     }
-                    endTime = uPortGetTickTimeMs();
+                    endTimeMs = uPortGetTickTimeMs();
                 } while (((int32_t)sizeBytes > sizeOrErrorCode) &&
-                         (endTime - startTime < timeoutMs));
+                         (endTimeMs - startTimeMs < (int32_t) timeoutMs));
             }
         }
         U_PORT_MUTEX_UNLOCK(gMutex);

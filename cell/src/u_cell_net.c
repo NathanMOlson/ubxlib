@@ -2935,7 +2935,7 @@ int32_t uCellNetScanGetFirst(uDeviceHandle_t cellHandle,
     char *pBuffer;
     int32_t bytesRead;
     int32_t mode;
-    int64_t innerStartTimeMs;
+    int32_t innerStartTimeMs;
     uAtClientDeviceError_t deviceError;
     bool gotAnswer = false;
     char *pSaved;

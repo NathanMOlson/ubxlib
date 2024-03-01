@@ -3043,7 +3043,7 @@ U_PORT_TEST_FUNCTION("[port]", "portTimers")
 {
     int32_t resourceCount;
     int32_t y;
-    int64_t startTime;
+    int32_t startTimeMs;
 
     // Whatever called us likely initialised the
     // port so deinitialise it here to obtain the
@@ -3102,9 +3102,9 @@ U_PORT_TEST_FUNCTION("[port]", "portTimers")
         // one-shot timer expires
         // Note: this test deliberately allows for slop in the actual timer
         // values however their relative values should still be correct
-        startTime = uPortGetTickTimeMs();
+        startTimeMs = uPortGetTickTimeMs();
         while ((gTimerParameterValue[2] == 0) &&
-               (uPortGetTickTimeMs() - startTime < 10000)) {
+               (uPortGetTickTimeMs() - startTimeMs < 10000)) {
             uPortTaskBlock(100);
         }
         U_PORT_TEST_ASSERT((gTimerParameterValue[2] == 1) && (gTimerParameterValue[3] == 3));
@@ -3120,9 +3120,9 @@ U_PORT_TEST_FUNCTION("[port]", "portTimers")
         U_PORT_TEST_ASSERT(uPortTimerStart(gTimerHandle[3]) == 0);
         U_PORT_TEST_ASSERT(uPortTimerStart(gTimerHandle[3]) == 0);
         // Wait for the periodic timer to expire one more time
-        startTime = uPortGetTickTimeMs();
+        startTimeMs = uPortGetTickTimeMs();
         while ((gTimerParameterValue[3] < 4) &&
-               (uPortGetTickTimeMs() - startTime < 5000)) {
+               (uPortGetTickTimeMs() - startTimeMs < 5000)) {
             uPortTaskBlock(100);
         }
         U_PORT_TEST_ASSERT(gTimerParameterValue[3] == 4);

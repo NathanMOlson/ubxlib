@@ -284,13 +284,13 @@ static bool atTimeoutIsObeyed(uAtClientHandle_t atClientHandle,
                               int32_t timeoutMs)
 {
     bool success = false;
-    int64_t startTime;
+    int32_t startTimeMs;
     int32_t duration;
     int32_t consecutiveTimeouts;
     int32_t x;
     int32_t y;
 
-    startTime = uPortGetTickTimeMs();
+    startTimeMs = uPortGetTickTimeMs();
     uAtClientLock(atClientHandle);
     // Send nothing
     consecutiveTimeouts = gConsecutiveTimeout;
@@ -309,7 +309,7 @@ static bool atTimeoutIsObeyed(uAtClientHandle_t atClientHandle,
     uPortTaskBlock(10);
     if ((x < 0) && (y < 0) &&
         (gConsecutiveTimeout == consecutiveTimeouts + 1)) {
-        duration = (int32_t) (uPortGetTickTimeMs() - startTime);
+        duration = (int32_t) (uPortGetTickTimeMs() - startTimeMs);
         if ((duration < timeoutMs) ||
             (duration > timeoutMs + U_AT_CLIENT_TEST_AT_TIMEOUT_TOLERANCE_MS)) {
             U_TEST_PRINT_LINE("AT timeout was not obeyed (%d ms as opposed"

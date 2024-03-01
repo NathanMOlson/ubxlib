@@ -91,7 +91,7 @@
 
 /** Used for keepGoingCallback() timeout.
  */
-static int64_t gStopTimeMs;
+static int32_t gStopTimeMs;
 
 /** Handles.
  */
@@ -302,8 +302,7 @@ U_PORT_TEST_FUNCTION("[cellNet]", "cellNetConnectDisconnectPlus")
     U_PORT_TEST_ASSERT(x < 0);
 
     // Now connect with a sensible timeout
-    gStopTimeMs = uPortGetTickTimeMs() +
-                  (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
+    gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
     x = uCellNetConnect(cellHandle, NULL,
 #ifdef U_CELL_TEST_CFG_APN
                         U_PORT_STRINGIFY_QUOTED(U_CELL_TEST_CFG_APN),
@@ -554,8 +553,7 @@ U_PORT_TEST_FUNCTION("[cellNet]", "cellNetScanRegActDeact")
     // user request, so give it several goes
     for (size_t x = 5; (x > 0) && (y <= 0); x--) {
         U_TEST_PRINT_LINE("scanning for networks...");
-        gStopTimeMs = uPortGetTickTimeMs() +
-                      (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
+        gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
         memset(buffer, 0, sizeof(buffer));
         memset(mccMnc, 0, sizeof(mccMnc));
         for (int32_t z = uCellNetScanGetFirst(cellHandle, buffer,
@@ -595,8 +593,7 @@ U_PORT_TEST_FUNCTION("[cellNet]", "cellNetScanRegActDeact")
 
     // Now register with a sensible timeout
     U_TEST_PRINT_LINE("registering...");
-    gStopTimeMs = uPortGetTickTimeMs() +
-                  (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
+    gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
     U_PORT_TEST_ASSERT(uCellNetRegister(cellHandle, NULL, keepGoingCallback) == 0);
 
     // Check that we're registered
@@ -622,8 +619,7 @@ U_PORT_TEST_FUNCTION("[cellNet]", "cellNetScanRegActDeact")
 
     // Now activate a PDP context
     U_TEST_PRINT_LINE("activating context...");
-    gStopTimeMs = uPortGetTickTimeMs() +
-                  (U_CELL_TEST_CFG_CONTEXT_ACTIVATION_TIMEOUT_SECONDS * 1000);
+    gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONTEXT_ACTIVATION_TIMEOUT_SECONDS * 1000);
     y = uCellNetActivate(cellHandle,
 #ifdef U_CELL_TEST_CFG_APN
                          U_PORT_STRINGIFY_QUOTED(U_CELL_TEST_CFG_APN),
@@ -663,8 +659,7 @@ U_PORT_TEST_FUNCTION("[cellNet]", "cellNetScanRegActDeact")
         U_CELL_PRIVATE_MODULE_IS_SARA_R4(pModule->moduleType)) {
         // If we were originally on LTE, or if this is a SARA-R4
         // we will now be deregistered, so register again
-        gStopTimeMs = uPortGetTickTimeMs() +
-                      (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
+        gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
         U_PORT_TEST_ASSERT(uCellNetRegister(cellHandle, NULL, keepGoingCallback) == 0);
     } else {
         // Get the IP address again, should be gone in the non-LTE/R4 case
@@ -673,8 +668,7 @@ U_PORT_TEST_FUNCTION("[cellNet]", "cellNetScanRegActDeact")
 
     // Check that we can activate the PDP context again
     U_TEST_PRINT_LINE("activating context...");
-    gStopTimeMs = uPortGetTickTimeMs() +
-                  (U_CELL_TEST_CFG_CONTEXT_ACTIVATION_TIMEOUT_SECONDS * 1000);
+    gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONTEXT_ACTIVATION_TIMEOUT_SECONDS * 1000);
     y = uCellNetActivate(cellHandle,
 #ifdef U_CELL_TEST_CFG_APN
                          U_PORT_STRINGIFY_QUOTED(U_CELL_TEST_CFG_APN),
@@ -743,8 +737,7 @@ U_PORT_TEST_FUNCTION("[cellNet]", "cellNetScanRegActDeact")
         // Don't do this for SARA-U201 as it upsets it rather a lot
         U_TEST_PRINT_LINE("activating context with different (invalid) APN...");
         rat = uCellNetGetActiveRat(cellHandle);
-        gStopTimeMs = uPortGetTickTimeMs() +
-                      (U_CELL_TEST_CFG_CONTEXT_ACTIVATION_TIMEOUT_SECONDS * 1000);
+        gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONTEXT_ACTIVATION_TIMEOUT_SECONDS * 1000);
         y = uCellNetActivate(cellHandle, "flibble",
 # ifdef U_CELL_TEST_CFG_USERNAME
                              U_PORT_STRINGIFY_QUOTED(U_CELL_TEST_CFG_USERNAME),
@@ -778,8 +771,7 @@ U_PORT_TEST_FUNCTION("[cellNet]", "cellNetScanRegActDeact")
     y = -1;
     for (size_t x = 2; (x > 0) && (y < 0); x--) {
         U_TEST_PRINT_LINE("connecting manually to network %s...", mccMnc);
-        gStopTimeMs = uPortGetTickTimeMs() +
-                      (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
+        gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
         y = uCellNetConnect(cellHandle, mccMnc,
 #ifdef U_CELL_TEST_CFG_APN
                             U_PORT_STRINGIFY_QUOTED(U_CELL_TEST_CFG_APN),
@@ -837,8 +829,7 @@ U_PORT_TEST_FUNCTION("[cellNet]", "cellNetScanRegActDeact")
 
     // Now register with manual network selection
     U_TEST_PRINT_LINE("registering manually on network %s...", mccMnc);
-    gStopTimeMs = uPortGetTickTimeMs() +
-                  (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
+    gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
     U_PORT_TEST_ASSERT(uCellNetRegister(cellHandle, mccMnc,
                                         keepGoingCallback) == 0);
 
@@ -853,8 +844,7 @@ U_PORT_TEST_FUNCTION("[cellNet]", "cellNetScanRegActDeact")
                        (status == U_CELL_NET_STATUS_REGISTERED_NO_CSFB_ROAMING));
 
     // Now activate a PDP context
-    gStopTimeMs = uPortGetTickTimeMs() +
-                  (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
+    gStopTimeMs = uPortGetTickTimeMs() + (U_CELL_TEST_CFG_CONNECT_TIMEOUT_SECONDS * 1000);
     y = uCellNetActivate(cellHandle,
 #ifdef U_CELL_TEST_CFG_APN
                          U_PORT_STRINGIFY_QUOTED(U_CELL_TEST_CFG_APN),

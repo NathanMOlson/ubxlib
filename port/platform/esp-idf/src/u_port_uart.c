@@ -646,7 +646,7 @@ int32_t uPortUartEventTrySend(int32_t handle, uint32_t eventBitMap,
 {
     int32_t errorCode = (int32_t) U_ERROR_COMMON_NOT_INITIALISED;
     uart_event_t event;
-    int64_t startTime = uPortGetTickTimeMs();
+    int32_t startTimeMs = uPortGetTickTimeMs();
 
     if (gMutex != NULL) {
 
@@ -672,7 +672,7 @@ int32_t uPortUartEventTrySend(int32_t handle, uint32_t eventBitMap,
                                               (void *) &event);
                 uPortTaskBlock(U_CFG_OS_YIELD_MS);
             } while ((errorCode != 0) &&
-                     (uPortGetTickTimeMs() - startTime < delayMs));
+                     (uPortGetTickTimeMs() - startTimeMs < delayMs));
         }
 
         U_PORT_MUTEX_UNLOCK(gMutex);

@@ -1232,12 +1232,12 @@ int32_t uBleSpsSend(uDeviceHandle_t devHandle, int32_t channel, const char *pDat
         return (int32_t)U_ERROR_COMMON_INVALID_PARAMETER;
     }
 
-    int64_t startTime = uPortGetTickTimeMs();
+    int32_t startTime = uPortGetTickTimeMs();
     int32_t errorCode = (int32_t)U_ERROR_COMMON_SUCCESS;
     spsConnection_t *pSpsConn = pGetSpsConn(spsConnHandle);
     if (pSpsConn->spsState == SPS_STATE_CONNECTED) {
         uint32_t timeout = pSpsConn->dataSendTimeoutMs;
-        int64_t time = startTime;
+        int32_t time = startTime;
 
         while ((bytesLeftToSend > 0) && (time - startTime < timeout)) {
             int32_t bytesToSendNow = bytesLeftToSend;
@@ -1253,7 +1253,7 @@ int32_t uBleSpsSend(uDeviceHandle_t devHandle, int32_t channel, const char *pDat
                 // again later if we are out of credits.
                 (void)uPortSemaphoreTryTake(pSpsConn->txCreditsSemaphore, 0);
                 if (pSpsConn->txCredits == 0) {
-                    int32_t timeoutLeft = (int32_t)timeout - (int32_t)(time - startTime);
+                    int32_t timeoutLeft = timeout - (time - startTime);
                     if (timeoutLeft < 0) {
                         timeoutLeft = 0;
                     }
