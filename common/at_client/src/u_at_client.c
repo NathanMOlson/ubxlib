@@ -3906,7 +3906,7 @@ int32_t uAtClientWaitCharacter(uAtClientHandle_t atHandle,
     uErrorCode_t errorCode = U_ERROR_COMMON_INVALID_PARAMETER;
     uAtClientInstance_t *pClient = (uAtClientInstance_t *) atHandle;
     uAtClientReceiveBuffer_t *pReceiveBuffer = pClient->pReceiveBuffer;
-    int32_t stopTimeMs;
+    int32_t startTimeMs;
     bool urcFound;
 
     // IMPORTANT: this can't lock pClient->mutex as it
@@ -3924,11 +3924,7 @@ int32_t uAtClientWaitCharacter(uAtClientHandle_t atHandle,
             // gets to zero (in which case we won't call bufferFill())
             // and hence, for safety, we run our own AT timeout guard
             // on the loop as well
-            stopTimeMs = uPortGetTickTimeMs() + pClient->atTimeoutMs;
-            if (stopTimeMs < 0) {
-                // Protect against wrapping
-                stopTimeMs = pClient->atTimeoutMs;
-            }
+            startTimeMs = uPortGetTickTimeMs();
             while ((errorCode != U_ERROR_COMMON_SUCCESS) &&
                    (pClient->error == U_ERROR_COMMON_SUCCESS)) {
                 // Continue to look for URCs, you never
@@ -3970,7 +3966,7 @@ int32_t uAtClientWaitCharacter(uAtClientHandle_t atHandle,
                             pClient->numConsecutiveAtTimeouts = 0;
                         }
                     } else {
-                        if (uPortGetTickTimeMs() > stopTimeMs) {
+                        if ((uPortGetTickTimeMs() - startTimeMs) > pClient->atTimeoutMs) {
                             // If we're stuck, set an error
                             setError(pClient, U_ERROR_COMMON_DEVICE_ERROR);
                             consecutiveTimeout(pClient);
