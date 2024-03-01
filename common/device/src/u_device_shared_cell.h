@@ -46,7 +46,7 @@ extern "C" {
 typedef struct {
     int32_t uart;
     uAtClientHandle_t at;
-    int64_t stopTimeMs;
+    int32_t stopTimeMs;
     int32_t pinPwrOn;
 } uDeviceCellContext_t;
 
