@@ -428,6 +428,13 @@ static int32_t sendMessageStream(uGnssPrivateInstance_t *pInstance,
     }
 
     if (printIt && (errorCodeOrSentLength == messageLengthBytes)) {
+        // Note: there is a Python script in the gnss/api directory which
+        // looks for the string below as a key to find the commands sent
+        // to the GNSS device in order to write them to a file which the
+        // uCenter tool can import.  Should you ever change the string
+        // below you must change the script to match.
+        // You should also change the AT version, see 
+        // sendReceiveUbxMessageAt(), to match.
         uPortLog("U_GNSS: sent command");
         uGnssPrivatePrintBuffer(pMessage, messageLengthBytes);
         uPortLog(".\n");
@@ -484,6 +491,13 @@ static int32_t receiveUbxMessageStream(uGnssPrivateInstance_t *pInstance,
             if (*(pResponse->ppBody) != NULL) {
                 memcpy(*(pResponse->ppBody), pBuffer + U_UBX_PROTOCOL_HEADER_LENGTH_BYTES, errorCodeOrLength);
                 if (printIt) {
+                    // Note: there is a Python script in the gnss/api directory which
+                    // looks for the string below as a key to find the commands received
+                    // from the GNSS device in order to write them to a file which the
+                    // uCenter tool can import.  Should you ever change the string
+                    // below you must change the script to match.
+                    // You should also change the AT version, see 
+                    // sendReceiveUbxMessageAt(), to match.
                     uPortLog("U_GNSS: decoded UBX response 0x%02x 0x%02x",
                              privateMessageId.id.ubx >> 8, privateMessageId.id.ubx & 0xff);
                     if (errorCodeOrLength > 0) {
@@ -565,7 +579,14 @@ static int32_t sendReceiveUbxMessageAt(const uAtClientHandle_t atHandle,
         // Read the response
         uAtClientCommandStop(atHandle);
         if (printIt) {
-            uPortLog("U_GNSS: sent UBX command");
+            // Note: there is a Python script in the gnss/api directory which
+            // looks for the string below as a key to find the commands sent
+            // to the GNSS device in order to write them to a file which the
+            // uCenter tool can import.  Should you ever change the string
+            // below you must change the script to match.
+            // You should also change the streamed version, see 
+            // sendMessageStream(), to match.
+            uPortLog("U_GNSS: sent command");
             uGnssPrivatePrintBuffer(pSend, sendLengthBytes);
             uPortLog(".\n");
         }
@@ -615,6 +636,13 @@ static int32_t sendReceiveUbxMessageAt(const uAtClientHandle_t atHandle,
                 }
                 if (printIt) {
                     if (errorCodeOrLength >= 0) {
+                        // Note: there is a Python script in the gnss/api directory which
+                        // looks for the string below as a key to find the commands received
+                        // from the GNSS device in order to write them to a file which the
+                        // uCenter tool can import.  Should you ever change the string
+                        // below you must change the script to match.
+                        // You should also change the streamed version, see 
+                        // receiveUbxMessageStream(), to match.
                         uPortLog("U_GNSS: decoded UBX response 0x%02x 0x%02x",
                                  pResponse->cls, pResponse->id);
                         if (errorCodeOrLength > 0) {
