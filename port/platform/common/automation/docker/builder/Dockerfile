@@ -91,13 +91,13 @@ RUN apt-get update && apt-get install -y wget &&                                
 # apt-get needs this to allow it to create temporary files
     chmod 1777 /tmp &&                                                              \
     if [ "$(arch)" != "aarch64" ]; then                                             \
-        wget -q --post-data="accept_license_agreement=accepted" -P /tmp https://www.segger.com/downloads/jlink/JLink_Linux_V788b_x86_64.deb && \
+        wget -q --post-data="accept_license_agreement=accepted" -P /tmp https://www.segger.com/downloads/jlink/JLink_Linux_V794m_x86_64.deb && \
 # use dpkg to unpack the .deb file, but don't configure quite yet
-        dpkg --unpack /tmp/JLink_Linux_V788b_x86_64.deb;                            \
+        dpkg --unpack /tmp/JLink_Linux_V794m_x86_64.deb;                            \
     else                                                                            \
-        wget -q --post-data="accept_license_agreement=accepted" -P /tmp https://www.segger.com/downloads/jlink/JLink_Linux_V788b_arm64.deb && \
+        wget -q --post-data="accept_license_agreement=accepted" -P /tmp https://www.segger.com/downloads/jlink/JLink_Linux_V794m_arm64.deb && \
 # use dpkg to unpack the .deb file, but don't configure quite yet.
-        dpkg --unpack /tmp/JLink_Linux_V788b_arm64.deb;                             \
+        dpkg --unpack /tmp/JLink_Linux_V794m_arm64.deb;                             \
     fi &&                                                                           \
 # the JLink installer includes a post-install step that will fail 'cos this is Docker
 # and udevadm stuff doesn't really work; we fix that by deleting the post install step
@@ -148,11 +148,19 @@ WORKDIR /workdir
 RUN chmod 1777 /tmp && \
     pip3 install pyserial pylint psutil pylink-square requests_toolbelt rpyc debugpy invoke==2.0.0 coloredlogs verboselogs && \
     apt-get update && apt-get install -y --no-install-recommends  \
-        usbutils gawk iputils-ping openssh-client socat \
+        usbutils gawk iputils-ping openssh-client socat ppp picocom \
 # Needed for OpenOCD
         libhidapi-hidraw0 && \
 # Cleanup
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Set permission on pppd so that we can run it without having to be root
+# and it doesn't require a serial modem to be a server capable of
+# authenticating itself
+RUN chown root /usr/sbin/pppd && chmod 4755 /usr/sbin/pppd && \
+    sed 's/^auth/noauth/' /etc/ppp/options > options && \
+    cp options /etc/ppp/options && \
+    rm options
 
 #***************************************************
 # Setup environmental variables

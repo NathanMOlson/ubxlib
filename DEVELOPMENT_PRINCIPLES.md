@@ -45,7 +45,7 @@ Then, in the body of the commit message don't be afraid to say why, in a verbose
 A corollary of this is that you should try not to combine disparate changes into a single commit; discrete commits are easier for the customer to absorb.
 
 # Do Not Get Fat
-Every line of `ubxlib` core code (i.e. ignoring test code) carries a cost for us and for the customer: for the customer it takes precious space in their MCU's memory and for us it increases test time.  Code that improves thread-safety, code that makes a `ubxlib` API easier to use and code which forms a feature that a customer has _requested_, is fine, but don't add code without being _sure_ it is worth it.  Conversely, remove code when you can: deprecate and then remove things that are either no longer supported in the module or that you believe no one is using, despite seeming like a good idea at the time \[a customer can object that they are using the thing in the deprecation period, so do make the deprecation notices clear\].  This especially applies to common code, which cannot be excluded like `cell`, `gnss`, `wifi` and `ble` code can.
+Every line of `ubxlib` core code (i.e. ignoring test code) carries a cost for us and for the customer: for the customer it takes precious space in their MCU's memory and for us it increases test time.  Code that improves thread-safety, code that makes a `ubxlib` API easier to use and code which forms a feature that a customer has _requested_, is fine, but don't add code without being _sure_ it is worth it.  Conversely, remove code when you can: deprecate and then remove things that are either no longer supported in the module or that you believe no one is using, despite seeming like a good idea at the time \[a customer can object that they are using the thing in the deprecation period, so do make the deprecation notices clear\].  This especially applies to common code, which cannot be excluded like the `cell`, `gnss`, `wifi` and `ble` code can.
 
 Adding code is putting on weight: make sure it is muscle and not fat.
 
@@ -61,10 +61,12 @@ Since the commit messages are our only change documentation, and since Github is
 
 - when merging a PR, try to stick to squash-merges or rebase-merges, rather than plain-old merges of a branch,
 - if a customer makes a PR to the public `ubxlib` repo, bring it in as follows:
-  - make sure that the customer PR is a single commit (ask them to squash it and re-push if it is not),
+  - if the customer PR is NEITHER (a) a single commit, NOR (b) made up of nice discrete/sensible changes that would make sense to any other customer, then ask them to squash it into a nice clean single commit and re-push,
   - pull the PR into a branch of `ubxlib_priv` so that you can throw it at the test system to prove that it is all good,
   - make sure that `ubxlib` `master` is up to date with `ubxlib_priv` `master` (i.e. push `ubxlib_priv` `master` to `ubxlib` `master`, which should always be possible, see above),
   - do a rebase-merge of the customer PR into `ubxlib` `master` (i.e. directly, not going via `ubxlib_priv`),
   - pull `ubxlib` `master` back into `ubxlib_priv` `master` (i.e. with the latest `ubxlib_priv` `master` on your machine, pull `ubxlib` `master` and then push that to `ubxlib_priv` `master`).
   
 The only exception to the above is when there has been active work on the `ubxlib_priv` `development` branch and that is ready to be brought into `master`: this should be brought into `ubxlib_priv` `master` through a normal (i.e. non-rebase, non-squash) merge since it will likely be a _very_ large commit of disparate things that will not be describable when in one big blob.
+
+As an aside, if `master` moves on underneath a branch **THAT YOU ALONE** are working on, please do a `rebase` of that development branch onto `master`, rather then merging the changes from `master` onto your branch, (i.e. checkout `master` locally, pull the latest `master` and then `rebase` your branch onto `master`); the reason for this is that, otherwise, the merge process can be confused and end up thinking that you intend to remove things that have just been added in the `master` branch.  If you share the branch with someone else, i.e. you are not working on it alone, then take care because rebasing obviously changes history; it may still be the right thing to do, 'cos the ground has indeed moved underneath you, history _has_ changed, but make sure that anyone else who is working on the branch with you is aware of what you have done when you push the branch back to the repo.

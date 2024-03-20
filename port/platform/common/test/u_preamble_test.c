@@ -179,7 +179,9 @@ U_PORT_TEST_FUNCTION("[preamble]", "preambleHeapDefence")
     uPortI2cInit();
     handle = uPortI2cOpen(U_CFG_APP_GNSS_I2C, U_CFG_APP_PIN_GNSS_SDA,
                           U_CFG_APP_PIN_GNSS_SCL, true);
-    uPortI2cClose(handle);
+    if (handle >= 0) {
+        uPortI2cClose(handle);
+    }
     uPortI2cDeinit();
 #endif
 
@@ -214,7 +216,7 @@ U_PORT_TEST_FUNCTION("[preamble]", "preambleHeapDefence")
     // heap usage directly, rather than through the resource counting mechanism,
     // and so this can result in "false" memory leak failurs.
     // To mitigate this problem we start with allocating a couple of FILE
-    // pointers so that that newlib doesn't need to allocate any new ones
+    // pointers so that newlib doesn't need to allocate any new ones
     // throughout the complete test suite.
     //
     static bool files_allocated = false;
